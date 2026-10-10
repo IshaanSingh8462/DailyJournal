@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Daily Log</title>
+<style>
+:root{--bg:#1e1e1e;--card:#1e1e1e;--line:#333335;--tx:#e6e6e6;--mut:#8a8a8e;--ac:#5c5c60;--hi:#2c2c2e;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:150px}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(30,30,30,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar .grp{display:flex;gap:6px;align-items:center;padding-right:10px;margin-right:2px;border-right:1px solid var(--line)}
+.bar .grp:last-child{border:0}
+button{background:#2a2a2c;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px 11px;font:inherit;font-size:14px;cursor:pointer}
+button:hover{border-color:var(--ac)}
+.emo{font-size:18px;padding:3px 10px}
+.lbl{font-size:12px;color:var(--mut)}
+input{background:#2a2a2c;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit;font-size:14px;color-scheme:dark}
+main{max-width:860px;margin:0 auto;padding:16px 14px 80px}
+details{border:0;border-bottom:1px solid #2a2a2c;margin:0}
+details.today>summary{background:var(--hi);border-radius:8px}
+summary{cursor:pointer;padding:12px;font-weight:700;font-size:18px;display:flex;align-items:center;gap:10px;list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";color:var(--mut);transition:transform .15s;display:inline-block}
+details[open]>summary::before{transform:rotate(90deg)}
+.badge{font-size:11px;font-weight:700;background:#4a4a4e;border-radius:99px;padding:1px 9px}
+.del{margin-left:auto;font-size:12px;padding:2px 8px;color:var(--mut);background:none;border:0}
+.del:hover,.del.sure{color:#ff6b6b}.del.sure{font-weight:700}
+.ed{padding:6px 12px 20px;outline:none;min-height:80px}
+.ed ul{margin:2px 0;padding-left:26px;list-style:none}
+.ed li{position:relative}
+.ed li::before{content:"–";position:absolute;left:-18px;color:var(--mut)}
+.ed ul ul{padding-left:22px}
+.ed s,.ed strike{color:var(--mut)}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#000;border:1px solid var(--line);padding:8px 16px;border-radius:99px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+#login{max-width:340px;margin:18vh auto 0;padding:0 20px;display:flex;flex-direction:column;gap:10px}
+#login h2{margin:0 0 6px}
+#msg{font-size:13px;color:#ff6b6b;min-height:18px}
+#status{font-size:12px;color:var(--mut);min-width:120px}
+</style></head><body>
+<div id="login" hidden>
+  <h2>Daily Log</h2>
+  <input id="em" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <button id="go">Log in</button>
+  <div id="msg"></div>
+</div>
+<div id="app" hidden>
+<div class="bar">
+  <div class="grp">
+    <button data-c="bold" title="Bold (Cmd/Ctrl+B)"><b>B</b></button>
+    <button data-c="italic" title="Italic (Cmd/Ctrl+I)"><i>I</i></button>
+    <button data-c="strikeThrough" title="Strikethrough (Cmd/Ctrl+Shift+X)"><s>S</s></button>
+    <button data-c="insertUnorderedList">– List</button>
+    <button id="szDn" title="Smaller text">A−</button><button id="szUp" title="Bigger text">A+</button>
+    <button data-c="removeFormat" title="Remove formatting">Clear</button>
+  </div>
+  <div class="grp"><span class="lbl">Checks (click = insert + copy)</span>
+    <button class="emo" data-e="😑">😑</button><button class="emo" data-e="✅">✅</button><button class="emo" data-e="❌">❌</button>
+  </div>
+  <div class="grp"><button id="goToday">Today</button>
+    <input type="date" id="newDate"><button id="addDay">+ Add day</button></div>
+  <div class="grp"><button id="exp">Export</button><button id="imp">Import</button><input type="file" id="file" accept=".json" hidden></div>
+  <div class="grp"><span id="status"></span><button id="out">Log out</button></div>
+</div>
+<main id="list"></main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL='https://wmbdmshmtpxepnnuylyg.supabase.co', SUPABASE_KEY='sb_publishable_k-KtkYnT5Aae_TivBNo7ng_OWJxKxZV';
+const KEY='daily-log-v1', DKEY='daily-log-dirty';
+const $=id=>document.getElementById(id);
+let data={}, dirty=new Set(), sb=null, pulled=false, timer;
+try{data=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+try{dirty=new Set(JSON.parse(localStorage.getItem(DKEY)||'[]'))}catch(e){}
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const now=new Date(), todayK=iso(now), yestK=iso(new Date(now.getFullYear(),now.getMonth(),now.getDate()-1));
+const label=k=>{const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).replace(',','')};
+const TPL='<div><b>Tdy:</b></div><ul><li><br></li></ul><div><br></div><div><b>Tmr:</b></div><ul><li><br></li></ul><div><br></div>';
+const status=t=>$('status').textContent=t;
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1600)}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem(DKEY,JSON.stringify([...dirty]))}catch(e){}}
+function touch(k,html){data[k]=html;dirty.add(k);persist();status('Editing…');clearTimeout(timer);timer=setTimeout(flush,700)}
+
+async function flush(){
+  if(!sb)return;
+  const ks=[...dirty].filter(k=>data[k]!=null);
+  if(!ks.length){status('Saved ✓');return}
+  if(!navigator.onLine){status('Offline – saved on this device');return}
+  status('Saving…');
+  const snap=ks.map(k=>[k,data[k]]);
+  const {error}=await sb.from('entries').upsert(snap.map(([day,content])=>({day,content,updated_at:new Date().toISOString()})),{onConflict:'user_id,day'});
+  if(error){status('Not synced – saved on this device');console.error(error);return}
+  snap.forEach(([k,c])=>{if(data[k]===c)dirty.delete(k)});
+  persist();
+  status(dirty.size?'Saving…':'Saved ✓');
+  if(dirty.size)timer=setTimeout(flush,700);
+}
+async function pull(){
+  const {data:rows,error}=await sb.from('entries').select('day,content').limit(5000);
+  if(error){console.error(error);return false}
+  const remote=new Set();
+  rows.forEach(r=>{remote.add(r.day);if(!dirty.has(r.day))data[r.day]=r.content});
+  Object.keys(data).forEach(k=>{if(!remote.has(k))dirty.add(k)}); // local-only days get uploaded, never dropped
+  persist();return true;
+}
+function ensureTemplates(){
+  [todayK,yestK].forEach(k=>{if(data[k]==null){data[k]=TPL;dirty.add(k)}});persist();
+}
+
+function render(keepOpen){
+  const open=new Set([...document.querySelectorAll('details[open]')].map(d=>d.dataset.k));
+  const list=$('list');list.innerHTML='';
+  Object.keys(data).sort().forEach(k=>{
+    const det=document.createElement('details');det.dataset.k=k;
+    if(k===todayK)det.className='today';
+    det.open=keepOpen?open.has(k):(k===todayK||k===yestK);
+    const sum=document.createElement('summary');
+    sum.innerHTML='<span>'+label(k)+'</span>'+(k===todayK?'<span class="badge">TODAY</span>':'');
+    const del=document.createElement('button');del.className='del';del.textContent='delete';
+    let armed=0;
+    del.onclick=async e=>{e.preventDefault();e.stopPropagation();
+      if(!armed){armed=1;del.textContent='click again to delete';del.classList.add('sure');
+        setTimeout(()=>{armed=0;del.textContent='delete';del.classList.remove('sure')},3000);return}
+      if(!navigator.onLine)return toast('Go online to delete');
+      const {error}=await sb.from('entries').delete().eq('day',k);
+      if(error)return toast('Delete failed – try again');
+      delete data[k];dirty.delete(k);persist();render(true);toast('Deleted')};
+    sum.appendChild(del);
+    const ed=document.createElement('div');ed.className='ed';ed.contentEditable='true';ed.spellcheck=true;
+    ed.innerHTML=data[k];
+    ed.oninput=e=>{
+      const sel=getSelection(),n=sel.anchorNode;
+      if(e&&e.inputType==='insertText'&&n&&n.nodeType===3&&/^[-–]\s$/.test(n.textContent)&&!n.previousSibling&&!n.nextSibling&&!(n.parentNode.closest&&n.parentNode.closest('li'))){
+        const rg=document.createRange();rg.selectNodeContents(n);sel.removeAllRanges();sel.addRange(rg);
+        document.execCommand('delete');document.execCommand('insertUnorderedList');
+      }
+      touch(k,ed.innerHTML)};
+    ed.onfocus=()=>{window.lastEd=ed};
+    ed.onkeydown=e=>{
+      if((e.metaKey||e.ctrlKey)&&e.shiftKey&&e.key.toLowerCase()==='x'){e.preventDefault();document.execCommand('strikeThrough')}
+      if(e.key==='Tab'){e.preventDefault();document.execCommand(e.shiftKey?'outdent':'indent')}
+    };
+    det.append(sum,ed);list.appendChild(det);
+  });
+}
+async function refresh(){
+  if(!sb||!navigator.onLine)return;
+  const ok=await pull();if(!ok)return;
+  if(!pulled){pulled=true;ensureTemplates()}
+  const shown=[...document.querySelectorAll('details')].map(d=>d.dataset.k).sort().join();
+  if(shown!==Object.keys(data).sort().join()){render(true)}
+  else document.querySelectorAll('details').forEach(d=>{
+    const ed=d.querySelector('.ed');
+    if(ed!==document.activeElement&&ed.innerHTML!==data[d.dataset.k])ed.innerHTML=data[d.dataset.k];
+  });
+  flush();
+}
+
+document.querySelectorAll('.bar button').forEach(b=>b.addEventListener('mousedown',e=>e.preventDefault()));
+document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{document.execCommand(b.dataset.c);if(window.lastEd)window.lastEd.dispatchEvent(new Event('input'))});
+document.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{
+  const e=b.dataset.e,sel=getSelection(),le=window.lastEd;
+  if(le&&sel.rangeCount&&le.contains(sel.anchorNode))document.execCommand('insertText',false,e);
+  try{navigator.clipboard.writeText(e).then(()=>toast('Copied '+e),()=>toast('Inserted '+e))}catch(x){toast('Inserted '+e)}
+});
+function size(d){
+  const le=window.lastEd;if(!le)return;
+  const cur=parseInt(document.queryCommandValue('fontSize'))||3;
+  document.execCommand('fontSize',false,Math.max(1,Math.min(7,cur+d)));
+  le.dispatchEvent(new Event('input'));
+}
+$('szDn').onclick=()=>size(-1);$('szUp').onclick=()=>size(1);
+function jump(k,b){const d=document.querySelector('[data-k="'+k+'"]');if(d){d.open=true;d.scrollIntoView({behavior:b||'smooth',block:'start'})}}
+$('goToday').onclick=()=>jump(todayK);
+$('addDay').onclick=()=>{
+  const v=$('newDate').value;if(!v)return toast('Pick a date first');
+  if(data[v]==null){data[v]=TPL;dirty.add(v);persist();render(true);flush()}
+  jump(v);
+};
+$('exp').onclick=()=>{
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));
+  a.download='daily-log-backup-'+todayK+'.json';a.click();
+};
+$('imp').onclick=()=>$('file').click();
+$('file').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  f.text().then(t=>{try{const o=JSON.parse(t);Object.keys(o).forEach(k=>{data[k]=o[k];dirty.add(k)});persist();render(true);flush();toast('Imported')}catch(x){toast('Bad file')}});
+};
+$('out').onclick=async()=>{if(dirty.size&&!confirm('Some changes are not synced yet. Log out anyway?'))return;await sb.auth.signOut();location.reload()};
+
+function showLogin(m){$('app').hidden=true;$('login').hidden=false;$('msg').textContent=m||''}
+async function login(){
+  $('msg').textContent='';
+  const {error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
+  if(error)$('msg').textContent=error.message;else start();
+}
+$('go').onclick=login;
+$('pw').onkeydown=e=>{if(e.key==='Enter')login()};
+async function start(){
+  $('login').hidden=true;$('app').hidden=false;
+  render(false);status('Syncing…');
+  await refresh();
+  jump(yestK,'auto');
+  if(!pulled)status('Offline – showing this device’s copy');
+}
+async function init(){
+  if(SUPABASE_URL.startsWith('PASTE')||!window.supabase){return showLogin('Add your Supabase URL and key in index.html first.')}
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  const {data:{session}}=await sb.auth.getSession();
+  session?start():showLogin();
+}
+window.addEventListener('online',refresh);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh()});
+window.addEventListener('beforeunload',()=>{clearTimeout(timer);flush()});
+init();
+</script>
+</body></html>
