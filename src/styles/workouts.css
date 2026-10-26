@@ -1,0 +1,53 @@
+.bar .ttl{font-size:17px}
+#status{margin-left:auto}
+.wk-main{max-width:860px;margin:0 auto;padding:16px 14px 80px}
+section{padding:18px 0;border-bottom:1px solid #2a2a2c}
+h2{font-size:18px;margin:0 0 2px}
+.hint{color:var(--mut);font-size:13px;margin:2px 0 10px}
+#todayLine{margin:4px 0 0;font-size:17px}
+#todayLine .badge{font-size:13px;padding:2px 11px}
+select,textarea{background:#2a2a2c;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit;font-size:14px;color-scheme:dark}
+textarea{width:100%;min-height:90px;resize:vertical}
+input[type=color]{width:38px;height:34px;padding:2px;cursor:pointer}
+.ghost{background:none;border:0;color:var(--mut);padding:4px 8px}
+.ghost:hover:not(:disabled){color:var(--tx)}
+.ghost:disabled{opacity:.3;cursor:default}
+.tdel:hover,.xdel:hover,.rm:hover{color:#ff6b6b!important}
+.pri{background:#3a3a3e;border-color:var(--ac)}
+.row,.slot{display:flex;gap:8px;align-items:center;margin:6px 0}
+.row .tn{flex:1;min-width:0}
+.slot .n{width:20px;color:var(--mut);text-align:right;font-size:13px}
+.slot select{flex:1;min-width:0;max-width:260px}
+.sched-opts{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.sched-opts label{font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.modes label{color:var(--mut)}
+.preview{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px}
+.pv{flex:0 0 auto;min-width:68px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;text-align:center;font-size:12px;color:var(--mut)}
+.pv.today{background:var(--hi);border-color:var(--ac)}
+.pv b{display:block;margin-top:2px;font-size:13px;color:var(--c)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.tab{--c:var(--tx)}
+.tab.on{background:color-mix(in srgb,var(--c) 22%,transparent);border-color:var(--c)}
+.tab small{color:var(--mut);margin-left:4px;font-size:11px}
+.card{border:1px solid var(--line);border-radius:10px;margin:8px 0;overflow:hidden}
+.ch{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:11px 12px;cursor:pointer}
+.ch strong{font-size:16px}
+.ch .meta{color:var(--mut);font-size:13px}
+.tag{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:1px 9px;color:var(--mut)}
+.chip{font-size:11px;font-weight:700;border-radius:99px;padding:1px 9px;color:var(--c);background:color-mix(in srgb,var(--c) 22%,transparent)}
+.ch .chev{margin-left:auto;color:var(--mut)}
+.cb{padding:2px 12px 12px;border-top:1px solid #2a2a2c}
+.ins{white-space:pre-wrap;margin:10px 0}
+.cb video{width:100%;max-height:420px;border-radius:8px;background:#000;margin:6px 0}
+.acts{display:flex;gap:4px}
+.form{border:1px solid var(--ac);border-radius:10px;padding:14px;margin:8px 0 14px;display:flex;flex-direction:column;gap:12px}
+.form h3{margin:0;font-size:16px}
+.form label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+.form .two{display:flex;gap:10px}
+.form .two label{flex:1}
+.form input[type=text],.form input[type=number]{width:100%}
+.days{display:flex;gap:8px;flex-wrap:wrap}
+.chk{font-size:14px;display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+.vid{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.vid input[type=file]{max-width:100%;font-size:13px}
+.empty{color:var(--mut);font-size:14px;padding:10px 0}

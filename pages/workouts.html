@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Workouts – Daily Log</title>
+</head><body>
+<div id="gate" class="wk-main" hidden>
+  <h2>Please log in first</h2>
+  <p class="hint">Open the journal, log in, then come back to this page.</p>
+  <a class="btn" href="/">Go to journal</a>
+</div>
+<div id="app">
+  <div class="bar">
+    <a class="btn" href="/">← Journal</a>
+    <strong class="ttl">Workouts</strong>
+    <span id="status"></span>
+  </div>
+  <main class="wk-main">
+    <p id="todayLine"></p>
+
+    <section>
+      <h2>1 · Workout days</h2>
+      <p class="hint">Make up your own days (Push, Pull, Legs, Rest, Arms…). Each gets a color for the card on the journal page.</p>
+      <div id="typesBox"></div>
+    </section>
+
+    <section>
+      <h2>2 · Schedule</h2>
+      <p class="hint">Put your days in order. The pattern repeats forever from the start date, so Push · Pull · Legs · Rest keeps rolling across weeks.</p>
+      <div id="schedBox"></div>
+    </section>
+
+    <section>
+      <h2>3 · Exercises</h2>
+      <div id="exBox"></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script type="module" src="/src/pages/workouts.js"></script>
+</body></html>
