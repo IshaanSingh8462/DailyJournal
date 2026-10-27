@@ -9,6 +9,8 @@ create table if not exists workout_plan (
 
 alter table workout_plan enable row level security;
 
+grant select, insert, update, delete on workout_plan to authenticated;
+
 drop policy if exists "own workout plan" on workout_plan;
 create policy "own workout plan" on workout_plan
   for all to authenticated

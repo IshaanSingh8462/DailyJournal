@@ -10,10 +10,21 @@ export const COLORS = ['#ff7a59', '#59a5ff', '#7ddc82', '#8a8a8e', '#c78bff', '#
 
 // types:     [{ id, name, color }]
 // schedules: [{ from: 'YYYY-MM-DD', start: 'YYYY-MM-DD', pattern: [typeId, ...] }]  (newest "from" wins)
+// checks:    { itemId: 'YYYY-MM-DD' }  when each Routine checklist item was last ticked
 // exercises: [{ id, name, sets, reps, bodyPart, instructions, dayIds: [typeId], video: {path,name}|null }]
-export const plan = { types: [], schedules: [], exercises: [] }
+export const plan = { types: [], schedules: [], exercises: [], checks: {} }
 
 let dirty = false, rev = 0, timer
+export let syncError = ''   // last cloud-sync problem, in plain words ('' = none)
+
+function describe(e) {
+  const m = (e && e.message) || String(e)
+  if ((e && (e.code === 'PGRST205' || e.code === '42P01')) || /does not exist|schema cache|not find the table/i.test(m))
+    return 'table workout_plan not found – run supabase/workouts.sql in the Supabase SQL Editor'
+  if ((e && e.code === '42501') || /permission denied|row-level security/i.test(m))
+    return 'permission denied – re-run supabase/workouts.sql (it includes the access grants)'
+  return m
+}
 let status = () => {}
 export const onStatus = fn => { status = fn }
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7)
@@ -22,8 +33,9 @@ function adopt(o) {
   plan.types = Array.isArray(o && o.types) ? o.types : []
   plan.schedules = (Array.isArray(o && o.schedules) ? o.schedules : []).slice().sort((a, b) => a.from.localeCompare(b.from))
   plan.exercises = Array.isArray(o && o.exercises) ? o.exercises : []
+  plan.checks = o && o.checks && typeof o.checks === 'object' ? o.checks : {}
 }
-const hasContent = () => plan.types.length || plan.schedules.length || plan.exercises.length
+const hasContent = () => plan.types.length || plan.schedules.length || plan.exercises.length || Object.keys(plan.checks).length
 
 try { adopt(JSON.parse(localStorage.getItem(KEY) || '{}')) } catch (e) {}
 dirty = localStorage.getItem(DKEY) === '1'
@@ -51,7 +63,8 @@ export async function flushPlan() {
     { data: body, updated_at: new Date().toISOString() },
     { onConflict: 'user_id' }
   )
-  if (error) { console.error(error); status('Not synced – saved on this device'); return }
+  if (error) { console.error(error); syncError = describe(error); status('Not synced: ' + syncError); return }
+  syncError = ''
   if (snap === rev) { dirty = false; persist(); status('Saved ✓') }
   else timer = setTimeout(flushPlan, 300)
 }
@@ -59,7 +72,8 @@ export async function flushPlan() {
 export async function pullPlan() {
   if (!sb || !navigator.onLine) return false
   const { data: row, error } = await sb.from('workout_plan').select('data').maybeSingle()
-  if (error) { console.error(error); return false }
+  if (error) { console.error(error); syncError = describe(error); return false }
+  syncError = ''
   if (row && row.data && !dirty) { adopt(row.data); persist() }
   else if (!row && hasContent()) { dirty = true; persist() }
   if (dirty) flushPlan()

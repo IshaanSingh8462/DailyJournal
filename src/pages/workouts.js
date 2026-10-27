@@ -3,10 +3,11 @@ import '../styles/workouts.css'
 
 import { sb, configured } from '../lib/supabase.js'
 import { $, toast, esc } from '../lib/ui.js'
+import { mountNav } from '../lib/nav.js'
 import { todayK, addDays, mondayOf, shortLabel } from '../lib/dates.js'
 import {
   plan, savePlan, pullPlan, onStatus, uid, COLORS,
-  typeById, latestSchedule, typeForSchedule, dayTypeFor
+  typeById, latestSchedule, typeForSchedule, dayTypeFor, syncError
 } from '../lib/plan.js'
 
 const BUCKET = 'exercise-videos'
@@ -24,10 +25,12 @@ const chip = t => `<span class="chip" style="--c:${hex(t.color)}">${esc(t.name)}
 
 // ───────────── top line
 function renderTop() {
+  document.querySelectorAll('#todayLine + .banner').forEach(x => x.remove())
   const t = dayTypeFor(todayK)
   $('todayLine').innerHTML = t
     ? `Today is <span class="badge wk" style="--c:${hex(t.color)}">${esc(t.name)}</span>`
     : '<span class="hint">No workout set for today yet – make your days and schedule below.</span>'
+  if (t && /rest/i.test(t.name)) $('todayLine').insertAdjacentHTML('afterend', '<a class="banner" href="/pages/routine.html#posture"><b>Rest day</b><span>Do Posture Block A and B today</span><i>›</i></a>')
 }
 
 // ───────────── 1. day types
@@ -179,7 +182,10 @@ function renderEx() {
     plan.types.map(t => `<button class="tab${tab === t.id ? ' on' : ''}" data-t="${t.id}" style="--c:${hex(t.color)}">${esc(t.name)}${dayTypeFor(todayK) && dayTypeFor(todayK).id === t.id ? '<small>today</small>' : ''}</button>`).join('') +
     '</div>'
   const list = plan.exercises.filter(x => tab === 'all' || x.dayIds.includes(tab))
-  $('exBox').innerHTML = tabs +
+  const tt = typeById(tab)
+  const rest = tt && /rest/i.test(tt.name)
+    ? '<a class="banner" href="/pages/routine.html#posture"><b>Rest day</b><span>Do Posture Block A and B</span><i>›</i></a>' : ''
+  $('exBox').innerHTML = tabs + rest +
     (exForm ? formHTML(exForm) : '<button id="newEx">+ New exercise</button>') +
     (list.length ? list.map(exCard).join('') : '<p class="empty">No exercises here yet.</p>')
   loadVideos()
@@ -333,6 +339,7 @@ function bind() {
 function renderAll() { renderTop(); renderTypes(); renderSched(); renderEx() }
 
 async function init() {
+  mountNav('workouts')
   onStatus(t => { $('status').textContent = t })
   if (configured) {
     const { data: { session } } = await sb.auth.getSession()
@@ -349,7 +356,7 @@ async function init() {
     renderAll()
     $('status').textContent = 'Saved ✓'
   } else {
-    $('status').textContent = 'Saved on this device (cloud sync unavailable)'
+    $('status').textContent = syncError ? 'Cloud sync failed: ' + syncError : 'Offline – saved on this device'
   }
 }
 init()

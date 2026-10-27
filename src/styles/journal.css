@@ -1,22 +1,28 @@
-.emo{font-size:18px;padding:3px 10px}
-main{max-width:860px;margin:0 auto;padding:16px 14px 80px}
-details{border:0;border-bottom:1px solid #2a2a2c;margin:0}
-details.today>summary{background:var(--hi);border-radius:8px}
-summary{cursor:pointer;padding:12px;font-weight:700;font-size:18px;display:flex;align-items:center;gap:10px;list-style:none;user-select:none}
+.emo{font-size:17px;padding:3px 9px!important}
+main{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+
+details{background:var(--surface);border-radius:14px;margin:0 0 10px;overflow:hidden}
+details.today{box-shadow:inset 0 0 0 1px rgba(255,214,10,.4)}
+summary{cursor:pointer;padding:14px 16px;font-weight:600;font-size:17px;display:flex;align-items:center;gap:10px;list-style:none;user-select:none}
 summary::-webkit-details-marker{display:none}
-summary::before{content:"▸";color:var(--mut);transition:transform .15s;display:inline-block}
+summary::before{content:"›";color:var(--mut);font-size:20px;line-height:1;transition:transform .15s;display:inline-block}
 details[open]>summary::before{transform:rotate(90deg)}
-.del{margin-left:auto;font-size:12px;padding:2px 8px;color:var(--mut);background:none;border:0}
-.del:hover,.del.sure{color:#ff6b6b}.del.sure{font-weight:700}
-.ed{padding:6px 12px 20px;outline:none;min-height:80px}
+.del{margin-left:auto;font-size:12px;padding:2px 8px;color:var(--mut);background:none}
+.del:hover,.del.sure{color:var(--danger);background:none}
+.del.sure{font-weight:600}
+
+.ed{padding:0 16px 18px;outline:none;min-height:90px;font-size:16px;line-height:1.6}
 .ed ul{margin:2px 0;padding-left:26px;list-style:none}
 .ed li{position:relative}
 .ed li::before{content:"–";position:absolute;left:-18px;color:var(--mut)}
 .ed ul ul{padding-left:22px}
 .ed s,.ed strike{color:var(--mut)}
-#login{max-width:340px;margin:18vh auto 0;padding:0 20px;display:flex;flex-direction:column;gap:10px}
-#login h2{margin:0 0 6px}
-#msg{font-size:13px;color:#ff6b6b;min-height:18px}
-#status{font-size:12px;color:var(--mut);min-width:120px}
-.next{display:block;width:100%;margin-top:16px;padding:12px;color:var(--mut);background:none;border:1px dashed var(--line)}
-.next:hover{color:var(--tx)}
+
+.next{display:block;width:100%;margin-top:6px;padding:14px;color:var(--ac);background:var(--surface);border-radius:14px;font-weight:600;font-size:15px}
+.next:hover{background:var(--surface-2)!important}
+
+#login{max-width:340px;margin:16vh auto 0;padding:0 20px;display:flex;flex-direction:column;gap:10px}
+#login h2{margin:0 0 8px;font-size:32px;font-weight:700}
+#login input{padding:12px 14px}
+#login button{padding:12px;font-size:16px}
+#msg{font-size:13px;color:var(--danger);min-height:18px}

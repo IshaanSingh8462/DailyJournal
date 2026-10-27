@@ -31,7 +31,7 @@ export function render(keepOpen) {
     det.open = keepOpen ? open.has(k) : (k === todayK || k === yestK)
 
     const sum = document.createElement('summary')
-    sum.innerHTML = '<span>' + label(k) + '</span>' + (k === todayK ? '<span class="badge">TODAY</span>' : '') + wkHTML(k)
+    sum.innerHTML = '<span>' + label(k) + '</span>' + (k === todayK ? '<span class="badge td">TODAY</span>' : '') + wkHTML(k)
 
     const del = document.createElement('button')
     del.className = 'del'

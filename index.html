@@ -8,11 +8,12 @@
   <h2>Daily Log</h2>
   <input id="em" type="email" placeholder="Email" autocomplete="username">
   <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
-  <button id="go">Log in</button>
+  <button id="go" class="pri">Log in</button>
   <div id="msg"></div>
 </div>
 <div id="app" hidden>
 <div class="bar">
+  <nav id="nav" class="nav"></nav>
   <div class="grp">
     <button data-c="bold" title="Bold (Cmd/Ctrl+B)"><b>B</b></button>
     <button data-c="italic" title="Italic (Cmd/Ctrl+I)"><i>I</i></button>
@@ -21,12 +22,11 @@
     <button id="szDn" title="Smaller text">A−</button><button id="szUp" title="Bigger text">A+</button>
     <button data-c="removeFormat" title="Remove formatting">Clear</button>
   </div>
-  <div class="grp"><span class="lbl">Checks (click = insert + copy)</span>
+  <div class="grp"><span class="lbl" title="Click to insert and copy">Checks</span>
     <button class="emo" data-e="😑">😑</button><button class="emo" data-e="✅">✅</button><button class="emo" data-e="❌">❌</button>
   </div>
   <div class="grp"><button id="goToday">Today</button>
     <input type="date" id="newDate"><button id="addDay">+ Add day</button></div>
-  <div class="grp"><a class="btn" href="/pages/workouts.html">Workouts</a></div>
   <div class="grp"><button id="exp">Export</button><button id="imp">Import</button><input type="file" id="file" accept=".json" hidden></div>
   <div class="grp"><span id="status"></span><button id="out">Log out</button></div>
 </div>

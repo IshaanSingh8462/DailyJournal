@@ -27,3 +27,4 @@ export const daysBetween = (a, b) => {
 }
 export const mondayOf = k => { const [y, m, d] = parse(k); return addDays(k, -((new Date(y, m - 1, d).getDay() + 6) % 7)) }
 export const shortLabel = k => { const [y, m, d] = parse(k); return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }) }
+export const shortDate = k => { const [y, m, d] = parse(k); return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }

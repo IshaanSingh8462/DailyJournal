@@ -31,7 +31,8 @@ and saves on your device, it just won't sync.
 index.html            main journal page
 pages/                extra pages: any .html file here is built automatically
 src/main.js           journal entry point (wires everything together)
-src/pages/            one script per extra page (workouts.js)
+src/pages/            one script per extra page (workouts.js, routine.js)
+src/data/routine.js   the text of the Routine page – edit it to change what shows
 supabase/             SQL to run in Supabase
 src/journal/          journal-only code: entries, toolbar, auth, sync
 src/lib/              shared code: supabase client, journal store/sync, plan.js (workouts), dates, ui helpers

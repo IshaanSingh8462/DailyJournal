@@ -9,6 +9,7 @@ import { render, jump } from './journal/entries.js'
 import { refresh } from './journal/sync.js'
 import { setupToolbar } from './journal/toolbar.js'
 import { showLogin, setupLogin } from './journal/auth.js'
+import { mountNav } from './lib/nav.js'
 
 async function start() {
   $('login').hidden = true
@@ -21,6 +22,7 @@ async function start() {
 }
 
 async function init() {
+  mountNav('journal')
   setupToolbar()
   if (!configured) {
     return showLogin('Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (see README).')
