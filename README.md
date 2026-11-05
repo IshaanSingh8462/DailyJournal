@@ -25,13 +25,18 @@ The Workouts page stores its data in Supabase. Open **SQL Editor** in Supabase, 
 `exercise-videos` storage bucket (both locked to your own user). Until then the page still works
 and saves on your device, it just won't sync.
 
+## Notes page (one-time Supabase setup)
+
+Same idea as Workouts: open the Supabase **SQL Editor**, paste `supabase/notes.sql`, and run it once.
+Notes are saved on the device first, then synced.
+
 ## Structure
 
 ```
 index.html            main journal page
 pages/                extra pages: any .html file here is built automatically
 src/main.js           journal entry point (wires everything together)
-src/pages/            one script per extra page (workouts.js, routine.js)
+src/pages/            one script per extra page (notes.js, workouts.js, routine.js)
 src/data/routine.js   the text of the Routine page – edit it to change what shows
 supabase/             SQL to run in Supabase
 src/journal/          journal-only code: entries, toolbar, auth, sync

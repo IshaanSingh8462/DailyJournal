@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Notes – Daily Log</title>
+</head><body>
+<div id="gate" class="gate" hidden>
+  <h2>Please log in first</h2>
+  <p>Open the journal, log in, then come back to Notes.</p>
+  <a class="btn" href="/">Go to journal</a>
+</div>
+<div id="app">
+  <div class="bar"><nav id="nav" class="nav"></nav><span id="status"></span></div>
+  <div class="nt" id="nt">
+    <aside class="pane-list">
+      <div class="lh"><h1>Notes</h1><button id="newBtn" class="pri">New note</button></div>
+      <input id="search" type="search" placeholder="Search" autocomplete="off">
+      <div id="nlist"></div>
+    </aside>
+    <section class="pane-ed">
+      <div id="empty" class="ne">
+        <p>Select a note, or start a new one.</p>
+      </div>
+      <div id="ed" class="edwrap" hidden>
+        <div class="et">
+          <button id="back" class="ghost only-m">‹ Notes</button>
+          <div class="tg">
+            <select id="fmt" aria-label="Text style">
+              <option value="">Style</option>
+              <option value="h2">Heading</option>
+              <option value="h3">Subheading</option>
+              <option value="div">Body</option>
+            </select>
+          </div>
+          <div class="tg">
+            <button data-c="bold" title="Bold (Cmd/Ctrl+B)"><b>B</b></button>
+            <button data-c="italic" title="Italic (Cmd/Ctrl+I)"><i>I</i></button>
+            <button data-c="underline" title="Underline (Cmd/Ctrl+U)"><u>U</u></button>
+            <button data-c="strikeThrough" title="Strikethrough (Cmd/Ctrl+Shift+X)"><s>S</s></button>
+          </div>
+          <div class="tg">
+            <button data-c="insertUnorderedList" title="Bulleted list">• List</button>
+            <button data-c="insertOrderedList" title="Numbered list">1. List</button>
+            <button id="check" title="Checklist">☑ Checklist</button>
+          </div>
+          <div class="tg">
+            <button id="szDn" title="Smaller text">A−</button>
+            <button id="szUp" title="Bigger text">A+</button>
+            <button id="clear" title="Remove formatting">Clear</button>
+          </div>
+          <span class="grow"></span>
+          <button id="pin" class="ghost">Pin</button>
+          <button id="del" class="ghost danger">Delete</button>
+        </div>
+        <div class="escroll">
+          <div class="ndate" id="ndate"></div>
+          <input id="ntitle" type="text" placeholder="Title" autocomplete="off">
+          <div id="nbody" contenteditable="true" spellcheck="true" data-ph="Start writing…"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script type="module" src="/src/pages/notes.js"></script>
+</body></html>

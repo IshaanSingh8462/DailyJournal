@@ -1,5 +1,6 @@
 const LINKS = [
   ['journal', 'Journal', '/'],
+  ['notes', 'Notes', '/pages/notes.html'],
   ['workouts', 'Workouts', '/pages/workouts.html'],
   ['routine', 'Routine', '/pages/routine.html']
 ]
