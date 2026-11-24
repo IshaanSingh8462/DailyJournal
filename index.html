@@ -26,12 +26,29 @@
   <div class="grp"><span class="lbl" title="Click to insert and copy">Checks</span>
     <button class="emo" data-e="😑">😑</button><button class="emo" data-e="✅">✅</button><button class="emo" data-e="❌">❌</button>
   </div>
+  <div class="grp"><button id="goalsBtn" title="Edit goals for the month and year">🎯 Goals</button></div>
   <div class="grp"><button id="goToday">Today</button>
     <input type="date" id="newDate"><button id="addDay">+ Add day</button></div>
   <div class="grp"><button id="exp">Export</button><button id="imp">Import</button><input type="file" id="file" accept=".json" hidden></div>
   <div class="grp"><span id="status"></span><button id="out">Log out</button></div>
 </div>
 <main id="list"></main>
+</div>
+<div id="goals" class="modal" role="dialog" aria-modal="true" aria-labelledby="gTitle" hidden>
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="seg"><button id="gTabMonth" class="on">Month</button><button id="gTabYear">Year</button></div>
+      <button id="gClose" class="ghost" aria-label="Close">Done</button>
+    </div>
+    <div class="sheet-nav">
+      <button id="gPrev" class="ghost" aria-label="Previous">‹</button>
+      <h3 id="gTitle"></h3>
+      <button id="gNext" class="ghost" aria-label="Next">›</button>
+      <button id="gNow" class="ghost">Now</button>
+    </div>
+    <textarea id="gText" spellcheck="true"></textarea>
+    <div class="sheet-foot"><span id="gStatus"></span></div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 <script type="module" src="/src/main.js"></script>
