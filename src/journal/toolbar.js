@@ -3,6 +3,7 @@ import { data, dirty, persist, flush } from '../lib/store.js'
 import { todayK } from '../lib/dates.js'
 import { $, toast } from '../lib/ui.js'
 import { render, jump, addDay } from './entries.js'
+import { closeSettings } from './topbar.js'
 
 // Remember the last selection inside an editor, so toolbar buttons still work
 // when the browser moves focus to the button (common on touch devices).
@@ -36,8 +37,8 @@ function size(d) {
 }
 
 export function setupToolbar() {
-  // keep editor focus when clicking toolbar buttons
-  document.querySelectorAll('.bar button').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()))
+  // keep editor focus when clicking formatting buttons
+  document.querySelectorAll('#fmt button').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()))
 
   document.querySelectorAll('[data-c]').forEach(b => b.onclick = () => {
     restoreSelection()
@@ -55,11 +56,12 @@ export function setupToolbar() {
 
   $('szDn').onclick = () => size(-1)
   $('szUp').onclick = () => size(1)
-  $('goToday').onclick = () => jump(todayK)
+  $('goToday').onclick = () => { closeSettings(); jump(todayK) }
 
   $('addDay').onclick = () => {
     const v = $('newDate').value
     if (!v) return toast('Pick a date first')
+    closeSettings()
     addDay(v)
   }
 
