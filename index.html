@@ -13,25 +13,56 @@
   <div id="msg"></div>
 </div>
 <div id="app" hidden>
-<div class="bar">
-  <nav id="nav" class="nav"></nav>
-  <div class="grp">
-    <button data-c="bold" title="Bold (Cmd/Ctrl+B)"><b>B</b></button>
-    <button data-c="italic" title="Italic (Cmd/Ctrl+I)"><i>I</i></button>
-    <button data-c="strikeThrough" title="Strikethrough (Cmd/Ctrl+Shift+X)"><s>S</s></button>
-    <button data-c="insertUnorderedList">– List</button>
-    <button id="szDn" title="Smaller text">A−</button><button id="szUp" title="Bigger text">A+</button>
-    <button data-c="removeFormat" title="Remove formatting">Clear</button>
+<header class="top" id="top">
+  <div class="bar tabs">
+    <nav id="nav" class="nav"></nav>
+    <span class="sp"></span>
+    <button id="goalsBtn" class="tb" title="Month / Year goals" aria-pressed="false">🎯 <span>Goals</span></button>
+    <button id="setBtn" class="tb" title="Settings">⚙︎ <span>Settings</span></button>
+    <span id="status"></span>
   </div>
-  <div class="grp"><span class="lbl" title="Click to insert and copy">Checks</span>
-    <button class="emo" data-e="😑">😑</button><button class="emo" data-e="✅">✅</button><button class="emo" data-e="❌">❌</button>
+  <div class="bar fmt" id="fmt" hidden>
+    <div class="grp">
+      <button data-c="bold" title="Bold (Cmd/Ctrl+B)"><b>B</b></button>
+      <button data-c="italic" title="Italic (Cmd/Ctrl+I)"><i>I</i></button>
+      <button data-c="strikeThrough" title="Strikethrough (Cmd/Ctrl+Shift+X)"><s>S</s></button>
+      <button data-c="insertUnorderedList">– List</button>
+      <button id="szDn" title="Smaller text">A−</button><button id="szUp" title="Bigger text">A+</button>
+      <button data-c="removeFormat" title="Remove formatting">Clear</button>
+    </div>
+    <div class="grp"><span class="lbl" title="Click to insert and copy">Checks</span>
+      <button class="emo" data-e="😑">😑</button><button class="emo" data-e="✅">✅</button><button class="emo" data-e="❌">❌</button>
+    </div>
   </div>
-  <div class="grp"><button id="goToday">Today</button>
-    <input type="date" id="newDate"><button id="addDay">+ Add day</button></div>
-  <div class="grp"><button id="exp">Export</button><button id="imp">Import</button><input type="file" id="file" accept=".json" hidden></div>
-  <div class="grp"><span id="status"></span><button id="out">Log out</button></div>
+</header>
+<div class="layout">
+  <main id="list"></main>
+  <aside id="goals" class="gp" aria-label="Goals" hidden>
+    <div class="gh">
+      <button id="gPrev" class="ghost" aria-label="Switch Month / Year">‹</button>
+      <h3 id="gMode">Month</h3>
+      <button id="gNext" class="ghost" aria-label="Switch Month / Year">›</button>
+      <button id="gClose" class="ghost" aria-label="Close goals">✕</button>
+    </div>
+    <div id="gList" class="gl"></div>
+    <div class="gf"><span id="gStatus"></span></div>
+  </aside>
 </div>
-<main id="list"></main>
+</div>
+<div id="settings" class="modal" role="dialog" aria-modal="true" aria-labelledby="sTitle" hidden>
+  <div class="sheet sm">
+    <div class="sheet-top"><h3 id="sTitle">Settings</h3><button id="sClose" class="ghost">Done</button></div>
+    <div class="set">
+      <h4>Days</h4>
+      <div class="row"><button id="goToday">Today</button></div>
+      <div class="row"><input type="date" id="newDate"><button id="addDay">+ Add day</button></div>
+    </div>
+    <div class="set">
+      <h4>Journal backup</h4>
+      <div class="row"><button id="exp">Export</button><button id="imp">Import</button><input type="file" id="file" accept=".json" hidden></div>
+    </div>
+    <button id="out" class="logout">Log out</button>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 <script type="module" src="/src/main.js"></script>

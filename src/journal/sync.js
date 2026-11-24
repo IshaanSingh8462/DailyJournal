@@ -1,11 +1,14 @@
 import { sb } from '../lib/supabase.js'
 import { data, state, pull, ensureTemplates, flush } from '../lib/store.js'
 import { pullPlan } from '../lib/plan.js'
+import { pullGoals } from '../lib/goals.js'
+import { updateGoals } from './goals.js'
 import { render, updateBadges } from './entries.js'
 
 export async function refresh() {
   if (!sb || !navigator.onLine) return
   pullPlan().then(ok => { if (ok) updateBadges() })
+  pullGoals().then(ok => { if (ok) updateGoals() })
   const ok = await pull()
   if (!ok) return
   if (!state.pulled) { state.pulled = true; ensureTemplates() }

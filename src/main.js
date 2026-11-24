@@ -8,6 +8,8 @@ import { $, setStatus } from './lib/ui.js'
 import { render, jump } from './journal/entries.js'
 import { refresh } from './journal/sync.js'
 import { setupToolbar } from './journal/toolbar.js'
+import { setupGoals } from './journal/goals.js'
+import { setupTopbar } from './journal/topbar.js'
 import { showLogin, setupLogin } from './journal/auth.js'
 import { mountNav } from './lib/nav.js'
 
@@ -24,6 +26,8 @@ async function start() {
 async function init() {
   mountNav('journal')
   setupToolbar()
+  setupTopbar()
+  setupGoals()
   if (!configured) {
     return showLogin('Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (see README).')
   }
